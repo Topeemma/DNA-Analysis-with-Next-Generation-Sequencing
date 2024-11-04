@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNA Promoter Sequence Classifier</title>
+</head>
+<body>
+    <h1>DNA Promoter Sequence Classifier</h1>
+    <form id="dna-form">
+        <label for="sequence">Enter DNA Sequence (57 nucleotides):</label>
+        <input type="text" id="sequence" name="sequence" required minlength="57" maxlength="57">
+        <button type="submit">Classify</button>
+    </form>
+    <p id="result"></p>
+
+    <script>
+        document.getElementById("dna-form").onsubmit = async (e) => {
+            e.preventDefault();
+            const sequence = document.getElementById("sequence").value;
+
+            try {
+                const response = await fetch("http://127.0.0.1:5000/predict", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ sequence })
+                });
+                const result = await response.json();
+                document.getElementById("result").textContent = result.prediction || result.error;
+            } catch (error) {
+                document.getElementById("result").textContent = "An error occurred. Check console for details.";
+            }
+        };
+    </script>
+</body>
+</html>
+
+
+<script>
+    document.getElementById("dna-form").onsubmit = async (e) => {
+        e.preventDefault();
+        const sequence = document.getElementById("sequence").value;
+
+        try {
+            const response = await fetch("http://127.0.0.1:5000/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ sequence })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Server error: ${response.statusText}`);
+            }
+
+            const result = await response.json();
+            document.getElementById("result").textContent = result.prediction || result.error;
+        } catch (error) {
+            console.error("Error:", error);
+            document.getElementById("result").textContent = "An error occurred. Check console for details.";
+        }
+    };
+</script>
